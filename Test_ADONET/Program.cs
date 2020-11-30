@@ -27,6 +27,7 @@ namespace Test_ADONET
                 Console.WriteLine($"{cn.Database} 資料庫已連線"); //顯示資料庫名稱
             }
 
+            //--------------------DataReader物件--------------------
             SqlDataReader dr = cmd.ExecuteReader(); //建立DataReader物件，並執行cmd物件的sql語法
 
             Console.Write(" 資料表欄位名稱 ");
@@ -52,7 +53,45 @@ namespace Test_ADONET
             if (cn.State == ConnectionState.Closed)
             {
                 Console.WriteLine($"{cn.Database}資料連線已關閉"); //顯示資料庫名稱
+                Console.WriteLine($"");
             }
+
+            //--------------------DataReader物件 End--------------------
+
+            //--------------------DataSet物件--------------------
+            DataSet ds = new DataSet();//建立DataSet物件
+
+            string sql_adp_p = "Select * from Table_product";
+            SqlDataAdapter adp_p = new SqlDataAdapter(sql_adp_p, cn); //建立DataAdapter物件，設定執行的Sql和連接cn物件
+            adp_p.Fill(ds, "Table_product"); //將資料表放入DataSet物件中，Fill方法會自己連線資料庫，不用特別open()
+
+            string sql_adp_d = "Select * from Table_productDetail";
+            SqlDataAdapter adp_d = new SqlDataAdapter(sql_adp_d, cn);
+            adp_d.Fill(ds, "Table_productDetail"); //DataSet物件可有多個資料表
+
+            DataTable dtP, dtD; //建立DataTable物件
+            dtP = ds.Tables["Table_product"]; //將DataSet的資料表指向dtp
+            dtD = ds.Tables[1];
+
+            Console.WriteLine("DataSet裡共有" + ds.Tables.Count + "個DataTable物件");
+            Console.WriteLine($"Table_product資料表共有{dtP.Columns.Count}個資料欄位");
+
+            for(int r = 0;r < dtP.Rows.Count; r++) //透過巢狀迴圈逐一取得資料表每一個欄位的資料
+            {
+                for(int c = 0;c < dtP.Columns.Count; c++)
+                {
+                    Console.Write($" {dtP.Rows[r][c]}");
+                }
+                Console.WriteLine("");
+            }
+
+            cn.Close(); //關閉與資料庫的連線
+
+            if (cn.State == ConnectionState.Closed)
+            {
+                Console.WriteLine($"{cn.Database}資料連線已關閉"); //顯示資料庫名稱
+            }
+            //--------------------DataSet物件 End--------------------
 
             Console.Read();
         }
