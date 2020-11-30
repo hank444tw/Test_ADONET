@@ -40,8 +40,8 @@ namespace Test_ADONET
             while (dr.Read()) //true表示DataReader指標尚未到EOF
             {
                 Console.Write($" {dr["Pid"].ToString()}");
-                Console.Write($" {dr["Product"].ToString()}");
-                Console.Write($" {dr["CreatTime"].ToString()}");
+                Console.Write($" {dr.GetString(1)}"); //以索引方式讀取資料會比欄位名稱，效率更快
+                Console.Write($" {dr.GetSqlDateTime(2).ToString()}"); //執行效率最快(限使用SQL Server7.0以上)
                 Console.WriteLine($" {dr["Price"].ToString()}");
                 Console.Write(" Price欄位資料 ");
             }
