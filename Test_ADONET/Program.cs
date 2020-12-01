@@ -17,6 +17,7 @@ namespace Test_ADONET
             string cnStr = "Server=localhost;Database=test1;Trusted_Connection=True;"; //建立連接字串
             SqlConnection cn = new SqlConnection(cnStr); //建立資料庫連接物件
 
+            //--------------------DataReader物件--------------------
             string sql = "Select * from Table_product";
             SqlCommand cmd = new SqlCommand(sql,cn); //建立Commad物件，並設定要執行的sql語法
 
@@ -27,9 +28,9 @@ namespace Test_ADONET
                 Console.WriteLine($"{cn.Database} 資料庫已連線"); //顯示資料庫名稱
             }
 
-            //--------------------DataReader物件--------------------
             SqlDataReader dr = cmd.ExecuteReader(); //建立DataReader物件，並執行cmd物件的sql語法
 
+            Console.WriteLine("以DataReader物件讀取資料表");
             Console.Write(" 資料表欄位名稱 ");
             for (int i = 0; i < dr.FieldCount; i++) //FieldCount傳回資料表資料行數量
             {
@@ -90,8 +91,35 @@ namespace Test_ADONET
             if (cn.State == ConnectionState.Closed)
             {
                 Console.WriteLine($"{cn.Database}資料連線已關閉"); //顯示資料庫名稱
+                Console.WriteLine("");
             }
             //--------------------DataSet物件 End--------------------
+
+            //--------------------使用Comnand物件CRUD--------------------
+            string sql_c = "Insert into Table_product (Product,CreatTime,Price) values ('產品3',GETDATE(),100)";
+            SqlCommand cmd_c = new SqlCommand(sql_c,cn); 
+
+            cn.Open(); //開啟與資料庫的連線
+            if (cn.State == ConnectionState.Open)
+            {
+                Console.WriteLine($"{cn.Database} 資料庫已連線"); //顯示資料庫名稱
+            }
+            Console.WriteLine($"新增{cmd_c.ExecuteNonQuery()}筆資料完成");
+
+            string sql_u = "Update Table_product Set Price = 600 Where Product = '產品3'";
+            cmd_c = new SqlCommand(sql_u, cn);
+            Console.WriteLine($"更改{cmd_c.ExecuteNonQuery()}筆資料完成");
+
+            string sql_d = " delete Table_product where Product = '產品3'";
+            cmd_c = new SqlCommand(sql_d, cn);
+            Console.WriteLine($"刪除{cmd_c.ExecuteNonQuery()}筆資料完成");
+
+            cn.Close(); //關閉與資料庫的連線
+            if (cn.State == ConnectionState.Closed)
+            {
+                Console.WriteLine($"{cn.Database}資料連線已關閉"); //顯示資料庫名稱
+            }
+            //--------------------使用Comnand物件CRUD End--------------------
 
             Console.Read();
         }
