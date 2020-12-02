@@ -118,8 +118,33 @@ namespace Test_ADONET
             if (cn.State == ConnectionState.Closed)
             {
                 Console.WriteLine($"{cn.Database}資料連線已關閉"); //顯示資料庫名稱
+                Console.WriteLine("");
             }
             //--------------------使用Comnand物件CRUD End--------------------
+
+            //--------------------使用ADO.NET 交易(Transaction)--------------------
+            cn.Open(); //開啟與資料庫的連線
+            if (cn.State == ConnectionState.Open)
+            {
+                Console.WriteLine($"{cn.Database} 資料庫已連線"); //顯示資料庫名稱
+            }
+
+            string sql_t = "Update Table_product Set Price = 600 Where Product = '產品2'";
+            SqlTransaction trans = cn.BeginTransaction(); //傳回tran交易物件
+            SqlCommand cmd_t = new SqlCommand(sql_t, cn, trans);
+
+            try
+            {
+                Console.WriteLine($"已更改{cmd_t.ExecuteNonQuery()}個資料列");
+                trans.Commit();
+                Console.WriteLine("trans物件成功Commit()");
+            }
+            catch(Exception ex)
+            {
+                trans.Rollback();
+                Console.WriteLine("執行trans.Rollback()完成");
+            }
+            //--------------------使用ADO.NET 交易(Transaction) End--------------------
 
             Console.Read();
         }
